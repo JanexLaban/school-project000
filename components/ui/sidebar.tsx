@@ -3,7 +3,9 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, LogOut } from "lucide-react"
+import { useRouter } from 'next/navigation'
+import { useAuth } from "@/contexts/auth-context"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -745,6 +747,33 @@ const SidebarMenuSubButton = React.forwardRef<
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
 
+const SidebarFooterContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => {
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  return (
+    <div ref={ref} className={cn("flex flex-col", className)} {...props}>
+      <SidebarMenuButton
+        onClick={handleLogout}
+        tooltip="Logout"
+        className="flex items-center gap-2"
+      >
+        <LogOut className="size-4" />
+        <span>Logout</span>
+      </SidebarMenuButton>
+    </div>
+  );
+});
+SidebarFooterContent.displayName = "SidebarFooterContent"
+
 export {
   Sidebar,
   SidebarContent,
@@ -769,5 +798,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  SidebarFooterContent,
   useSidebar,
 }
